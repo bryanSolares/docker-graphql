@@ -31,22 +31,22 @@ jobs:
       env:
         DOCKER_USER: ${{ secrets.DOCKER_USER }}
         DOCKER_PASSWORD: ${{ secrets.DOCKER_PASSWORD }}
+      run: |
+        docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+        
+    - name: Build Docker Image
+      env:
         NEW_VERSION: ${{ steps.version.outputs.version }}
       run: |
-        echo "Iniciando Login"
-        docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
-        echo "Finalizando Login"
-        echo "New Version: $NEW_VERSION!!!!!!!!!!!!!!!!!"
+        docker build -t solaresbryan/docker-graphql:$NEW_VERSION .
+        docker build -t solaresbryan/docker-graphql:latest .
         
-#     - name: Build Docker Image
-#       run: |
-#         docker build -t solaresbryan/docker-graphql:0.0.2 .
-#         docker build -t solaresbryan/docker-graphql:latest .
-        
-#     - name: Push Docker Image
-#       run: |
-#         docker push solaresbryan/docker-graphql:0.0.2 
-#         docker push solaresbryan/docker-graphql:latest
+    - name: Push Docker Image
+      env:
+        NEW_VERSION: ${{ steps.version.outputs.version }}
+      run: |
+        docker push solaresbryan/docker-graphql:$NEW_VERSION
+        docker push solaresbryan/docker-graphql:latest
         
         
 #     - name: Build the Docker image
